@@ -11,12 +11,12 @@ import (
 func main() {
 	bd, err := getDB()
 	if err != nil {
-		log.Printf("Error with database" + err.Error())
+		log.Printf("Error con la bd" + err.Error())
 		return
 	} else {
 		err = bd.Ping()
 		if err != nil {
-			log.Printf("Error making connection to DB. Please check credentials. The error is: " + err.Error())
+			log.Printf("Error conectando con la base de datos, verifica credenciales, error: " + err.Error())
 			return
 		}
 	}
