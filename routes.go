@@ -3,14 +3,28 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
-func setupRoutesForBooks(router *mux.Router) {
-	// First enable CORS. If you don't need cors, comment the next line
-	enableCORS(router)
+type Book struct {
+	Id    int64  `json:"id"`
+	Name  string `json:"name"`
+	Genre string `json:"genre"`
+	Year  int64  `json:"year"`
+}
 
+func stringToInt64(s string) (int64, error) {
+	numero, err := strconv.ParseInt(s, 0, 64)
+	if err != nil {
+		return 0, err
+	}
+	return numero, err
+}
+
+func setupRoutesForBooks(router *mux.Router) {
+	enableCORS(router)
 	router.HandleFunc("/Books", func(w http.ResponseWriter, r *http.Request) {
 		Books, err := getBooks()
 		if err == nil {
@@ -24,7 +38,6 @@ func setupRoutesForBooks(router *mux.Router) {
 		id, err := stringToInt64(idAsString)
 		if err != nil {
 			respondWithError(err, w)
-			// We return, so we stop the function flow
 			return
 		}
 		Book, err := getBookById(id)
@@ -51,7 +64,6 @@ func setupRoutesForBooks(router *mux.Router) {
 	}).Methods(http.MethodPost)
 
 	router.HandleFunc("/Book", func(w http.ResponseWriter, r *http.Request) {
-		// Declare a var so we can decode json into it
 		var Book Book
 		err := json.NewDecoder(r.Body).Decode(&Book)
 		if err != nil {
@@ -70,7 +82,6 @@ func setupRoutesForBooks(router *mux.Router) {
 		id, err := stringToInt64(idAsString)
 		if err != nil {
 			respondWithError(err, w)
-			// We return, so we stop the function flow
 			return
 		}
 		err = deleteBook(id)
